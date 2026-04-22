@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Video Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h2 class="logo">ISR Lab</h2> 
+        <nav class="navigation">
+            <a href="#live-camera">Live Camera</a> 
+            <a href="#">Playback</a>
+            <a href="#">Admin</a>
+            <button class="btnLogin-popup">Login</button>
+        </nav>
+    </header>
+
+<main id="live-camera" class="video-container">
+    <div class="video-wrapper">
+        <img src="{{ url_for('video_feed') }}" alt="Live Stream" class="stream-img">
+    </div>
+</main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  ai-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - py.env
+    volumes:
+      - .:/app
+      - ./recordings:/home/isrdds/video_analytics/recordings
+      - ./clips:/home/isrdds/video_analytics/clips
+      - ./dataset_wajah.pkl:/app/dataset_wajah.pkl
+    networks:
+      - va-network
+    restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined
+
+networks:
+  va-network:
+    driver: bridge
