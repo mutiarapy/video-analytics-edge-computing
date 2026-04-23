@@ -6,6 +6,7 @@ import os
 import subprocess
 import requests
 import time
+import torch
 from collections import deque
 from ultralytics import YOLO
 from insightface.app import FaceAnalysis
@@ -14,6 +15,16 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv('py.env')
+
+USE_GPU = torch.cuda.is_available()
+print(f"[INFO] Mode: {'GPU - ' + torch.cuda.get_device_name(0) if USE_GPU else 'CPU'}")
+
+if USE_GPU:
+    providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
+    ctx_id = 0
+else:
+    providers = ['CPUExecutionProvider']
+    ctx_id = -1
 
 #garis
 class BoundaryLine:
@@ -35,14 +46,16 @@ PYTHON_SERVER_URL = os.getenv("PYTHON_SERVER_URL", "http://localhost:5000")
 SERVER_URL        = os.getenv("SERVER_URL", "http://localhost:3000")
 
 model = YOLO('yolov8n.pt')
+if USE_GPU:
+    model.to('cuda')
 
 with open("dataset_wajah.pkl", "rb") as f:
     data             = pickle.load(f)
     known_embeddings = data["embeddings"]
     known_names      = data["names"]
 
-face_app = FaceAnalysis(name='buffalo_s', providers=['CPUExecutionProvider'])
-face_app.prepare(ctx_id=-1, det_size=(640, 640))
+face_app = FaceAnalysis(name='buffalo_s', providers= providers)
+face_app.prepare(ctx_id= ctx_id, det_size=(640, 640))
 
 STREAM_URL = os.getenv("STREAM_URL")
 if not STREAM_URL:
