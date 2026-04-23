@@ -1,0 +1,25 @@
+FROM nvcr.io/nvidia/l4t-pytorch:r36.2.0-pth2.1-py3
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    libgl1 \
+    libglib2.0-0 \
+    g++ \
+    build-essential \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN wget https://pypi.jetson-ai-lab.io/jp6/cu126/+f/e1e/9e3dc2f4d5551/onnxruntime_gpu-1.23.0-cp310-cp310-linux_aarch64.whl && \
+    pip install --no-cache-dir onnxruntime_gpu-1.23.0-cp310-cp310-linux_aarch64.whl && \
+    rm onnxruntime_gpu-1.23.0-cp310-cp310-linux_aarch64.whl
+
+COPY requirements-gpu.txt .
+RUN pip install --no-cache-dir -r requirements-gpu.txt
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["python", "videoanalytics.py"]
