@@ -17,3 +17,7 @@ requirements.txt*.backup
 app.code-workspace
 videoanalyticsfacenetbackup.py
 videoanalyticsinsightfacebackup.py
+register_face_facenet.py
+cache_facenet.py
+dataset_wajah_facenet.pkl
+videoanalyticsfacenetbackup.py
