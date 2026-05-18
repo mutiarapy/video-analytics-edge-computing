@@ -1,29 +1,41 @@
-version: '3.8'
+  services:
+    videoanalytics:
+      build:
+        context: .
+        dockerfile: Dockerfile.gpu
+      image: videoanalytics:jetson
+      container_name: videoanalytics
+      runtime: nvidia
+      shm_size: '2gb'
+      ulimits:
+        memlock: -1
+        stack: 671088641
+      env_file:
+        - py.env
+      environment:
+        - NVIDIA_VISIBLE_DEVICES=all
+        - NVIDIA_DRIVER_CAPABILITIES=all
+        - CUDA_VISIBLE_DEVICES=0
+      volumes:
+        - /mnt/nvme/videoanalytics/recordings:/recordings
+        - /mnt/nvme/videoanalytics/clips:/clips
+        - /mnt/nvme/videoanalytics/insightface:/root/.insightface
+        - /mnt/nvme/videoanalytics/ultralytics:/root/.config/Ultralytics
+        - /mnt/nvme/videoanalytics/models:/app/models
+      ports:
+        - "5000:5000"
 
-services:
-  ai-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.gpu
-    ports:
-      - "5000:5000"
-    env_file:
-      - py.env
-    volumes:
-      - .:/app
-      - ./recordings:/app/recordings
-      - ./clips:/app/clips
-      - ./dataset_wajah.pkl:/app/dataset_wajah.pkl
-    runtime: nvidia 
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
-    networks:
-      - va-network
-    restart: unless-stopped
-    security_opt:
-      - seccomp:unconfined
+      restart: unless-stopped
 
-networks:
-  va-network:
-    driver: bridge
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "50m"
+          max-file: "5"
+
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 90s

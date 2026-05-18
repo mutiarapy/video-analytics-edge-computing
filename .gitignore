@@ -4,8 +4,16 @@ __pycache__/
 recordings/
 clips/
 dataset_wajah.pkl
+dataset_wajah_facenet.pkl   
 *.pt
+*.engine                 
+*.whl                      
+*.onnx                      
 py.env
 .env
 dataset/
-requirements.txt
+requirements.txt*.backup
+*.backup2
+app.code-workspace
+videoanalyticsfacenetbackup.py
+videoanalyticsinsightfacebackup.py
